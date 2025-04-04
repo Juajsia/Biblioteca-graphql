@@ -1,0 +1,23 @@
+<body>
+    <nav>
+        <h1>Digital Library</h1>
+        <div class="login-form">
+            <form>
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" placeholder="Usuario" [(ngModel)]="username" required>
+
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Contraseña" [(ngModel)]="password"
+                    required>
+
+                <button type="submit" (click)="login()">Ingresar</button>
+            </form>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="image-container">
+            <img src="5cb9c03787ab7860fdd5dc4d13a72043-diseno-de-logo-de-biblioteca-digital.jpg"
+                alt="Logo Biblioteca Digital">
+        </div>
+    </div>
+</body>

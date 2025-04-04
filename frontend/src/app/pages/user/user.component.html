@@ -1,0 +1,65 @@
+<body>
+    <nav>
+        <h1>Digital Library</h1>
+        <ul class="nav-links">
+            <li><a [routerLink]="['/catalogo']" routerLinkActive="active-link">Catalogo</a></li>
+            <li><a [routerLink]="['/usuario']" routerLinkActive="active-link">Usuarios</a></li>
+        </ul>
+
+        <a [routerLink]="['']" (click)="logOut()">Cerrar sesion</a>
+    </nav>
+
+    <div class="search-container">
+        <button class="btn add-book-btn" (click)="showUserForm=true">Agregar Usuario</button>
+    </div>
+
+    <div class="card-container">
+        @for (item of users; track item.id ; let i=$index) {
+        <div class="card">
+            <img src="user-icon.png" alt="Usuario">
+            <div class="card-content">
+                <p><strong>ID:</strong> {{item.id}}</p>
+                <p><strong>Usuario:</strong> {{item.userName}}</p>
+                <p><strong>Tipo:</strong> {{item.type}}</p>
+                <button class="edit-btn" (click)="update(item)">Editar</button>
+            </div>
+        </div>
+        }
+        @if (showUserForm) {
+        <div class="overlay" id="overlay">
+            <div class="form-container">
+                @if (editUser) {
+                <h2>Editar Usuario</h2>
+                } @else {
+                <h2>Agregar Usuario</h2>
+                }
+                <form [formGroup]="userForm">
+                    <label for="nombre">Nombre de Usuario:</label>
+                    <input type="text" id="nombre" formControlName="userName" placeholder="Ingrese nombre de usuario">
+                    @if(editUser) {
+
+                    <label for="password">Nueva contraseña:</label>
+                    } @else {
+                    <label for="password">Contraseña:</label>
+                    }
+                    <input type="password" id="password" formControlName="password" placeholder="Ingrese contraseña">
+
+                    <label for="tipo">Tipo:</label>
+                    <select id="tipo" formControlName="type">
+                        <option value="Administrador">Administrador</option>
+                        <option value="Empleado">Empleado</option>
+                    </select>
+                    @if (editUser) {
+                    <button type="submit" class="submit-btn delete-btn" (click)="delete()">Eliminar</button>
+                    <button type="submit" class="submit-btn" (click)="saveData()">Guardar</button>
+                    } @else {
+                    <button type="submit" class="submit-btn" (click)="create()">Crear</button>
+                    }
+                    <button type="button" class="close-btn" (click)="cancel()">Cancelar</button>
+                </form>
+            </div>
+        </div>
+        }
+
+    </div>
+</body>
