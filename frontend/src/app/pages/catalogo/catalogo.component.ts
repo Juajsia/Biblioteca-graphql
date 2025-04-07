@@ -402,7 +402,7 @@ export class CatalogoComponent {
   authorsBooks: any = []
   authorName = ''
   showAuthorBook(item: any) {
-    this.authorsBooks = item.Books
+    this.authorsBooks = item.books
     this.authorName = item.fullName
   }
 

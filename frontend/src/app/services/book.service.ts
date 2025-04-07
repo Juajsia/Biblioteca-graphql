@@ -1,31 +1,112 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Apollo, gql } from 'apollo-angular';
+import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookService {
+  constructor(private apollo: Apollo) { }
 
-  private myAppUrl: string
-  private myApiUrl: string
-  constructor(private http: HttpClient) {
-    this.myAppUrl = 'http://localhost:3000/'
-    this.myApiUrl = 'api/book'
-  }
   create(book: any): Observable<any> {
-    return this.http.post<any>(`${this.myAppUrl}${this.myApiUrl}/`, book)
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation CreateBook($ISBN: String!, $title: String!, $editorial: String!, $genre: String!, $year: Int!, $authorCedula: String!) {
+          createBook(ISBN: $ISBN, title: $title, editorial: $editorial, genre: $genre, year: $year, authorCedula: $authorCedula) {
+            ISBN
+            title
+            editorial
+            genre
+            year
+            author {
+              cedula
+              fullName
+              nationality
+            }
+          }
+        }
+      `,
+      variables: { ISBN: book.ISBN, title: book.title, editorial: book.editorial, genre: book.genre, year: book.year, authorCedula: book.authorCedula }
+    }).pipe(map((result: any) => result.data.createBook));
   }
+
   update(book: any, ISBN: string): Observable<any> {
-    return this.http.put<any>(`${this.myAppUrl}${this.myApiUrl}/${ISBN}`, book)
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation UpdateBook($ISBN: String!, $title: String, $editorial: String, $genre: String, $year: Int, $authorCedula: String) {
+          updateBook(ISBN: $ISBN, title: $title, editorial: $editorial, genre: $genre, year: $year, authorCedula: $authorCedula) {
+            ISBN
+            title
+            editorial
+            genre
+            year
+            author {
+              cedula
+              fullName
+              nationality
+            }
+          }
+        }
+      `,
+      variables: { ISBN, title: book.title, editorial: book.editorial, genre: book.genre, year: book.year, authorCedula: book.authorCedula }
+    }).pipe(map((result: any) => result.data.updateBook));
   }
+
   remove(ISBN: string): Observable<any> {
-    return this.http.delete<any>(`${this.myAppUrl}${this.myApiUrl}/${ISBN}`)
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation DeleteBook($ISBN: String!) {
+          deleteBook(ISBN: $ISBN)
+        }
+      `,
+      variables: { ISBN }
+    }).pipe(map((result: any) => result.data.deleteBook));
   }
+
   findAll(): Observable<any> {
-    return this.http.get<any>(`${this.myAppUrl}${this.myApiUrl}/`)
+    return this.apollo.query({
+      query: gql`
+        query GetBooks {
+          getBooks {
+            ISBN
+            title
+            editorial
+            genre
+            year
+            authorCedula
+            author {
+              cedula
+              fullName
+              nationality
+            }
+          }
+        }
+      `,
+      fetchPolicy: 'no-cache'
+    }).pipe(map((result: any) => result.data.getBooks));
   }
+
   findbyISBN(ISBN: string): Observable<any> {
-    return this.http.get<any>(`${this.myAppUrl}${this.myApiUrl}/${ISBN}`)
+    return this.apollo.query({
+      query: gql`
+        query GetBook($ISBN: String!) {
+          getBook(ISBN: $ISBN) {
+            ISBN
+            title
+            editorial
+            genre
+            year
+            author {
+              cedula
+              fullName
+              nationality
+            }
+          }
+        }
+      `,
+      variables: { ISBN },
+      fetchPolicy: 'no-cache'
+    }).pipe(map((result: any) => result.data.getBook));
   }
 }

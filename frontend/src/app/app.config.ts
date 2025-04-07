@@ -11,14 +11,14 @@ import { InMemoryCache } from '@apollo/client/core';
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),
   provideHttpClient(withInterceptorsFromDi(), withFetch(), withInterceptors([addTokenInterceptor])), provideHttpClient(), provideApollo(() => {
-      const httpLink = inject(HttpLink);
+    const httpLink = inject(HttpLink);
 
-      return {
-        link: httpLink.create({
-          uri: '<%= endpoint %>',
-        }),
-        cache: new InMemoryCache(),
-      };
-    })
+    return {
+      link: httpLink.create({
+        uri: 'http://localhost:3000/graphql',
+      }),
+      cache: new InMemoryCache(),
+    };
+  })
   ]
 };

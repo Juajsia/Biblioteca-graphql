@@ -1,165 +1,244 @@
 <body>
-    <nav>
-        <h1>{{'Digital Library - ' + userType}}</h1>
-        <ul class="nav-links">
-            <li><a [routerLink]="['/catalogo']" routerLinkActive="active-link">Catalogo</a></li>
-            @if (userType === 'Administrador') {
-            <li><a [routerLink]="['/usuario']" routerLinkActive="active-link">Usuarios</a></li>
-            }
-        </ul>
+  <nav>
+    <h1>{{ "Digital Library - " + userType }}</h1>
+    <ul class="nav-links">
+      <li>
+        <a [routerLink]="['/catalogo']" routerLinkActive="active-link"
+          >Catalogo</a
+        >
+      </li>
+      @if (userType === 'Administrador') {
+      <li>
+        <a [routerLink]="['/usuario']" routerLinkActive="active-link"
+          >Usuarios</a
+        >
+      </li>
+      }
+    </ul>
 
-        <a [routerLink]="['']" (click)="logOut()">Cerrar sesion</a>
-    </nav>
-    <div class="search-container">
-        <select id="search-type" [(ngModel)]="selectedOption">
-            <option value="libro">Libro</option>
-            <option value="autor">Autor</option>
-        </select>
-        @if (selectedOption==='libro') {
-        <input type="text" id="search-bar" placeholder="Buscar por ISBN..." [(ngModel)]="searchISBN">
-        }@else {
-        <input type="text" id="search-bar" placeholder="Buscar por Cedula..." [(ngModel)]="searchCedula">
-        }
-        <button class="btn search-btn" (click)="search()">Buscar</button>
-        @if (searchBack) {
-        <button class="close-btn" (click)="goBack()">Regresar</button>
-        }
-
-        @if (userType === 'Administrador') {
-
-        @if (selectedOption==='libro') {
-        <button class="btn add-book-btn" (click)="showBookForm=true">Agregar Libro</button>
-        }@else {
-        <button class="btn add-author-btn" (click)="showAuthorForm=true">Agregar Autor</button>
-        }
-        }
-    </div>
-
+    <a [routerLink]="['']" (click)="logOut()">Cerrar sesion</a>
+  </nav>
+  <div class="search-container">
+    <select id="search-type" [(ngModel)]="selectedOption">
+      <option value="libro">Libro</option>
+      <option value="autor">Autor</option>
+    </select>
     @if (selectedOption==='libro') {
-    <div class="card-container">
-        @for (item of books; track item.ISBN; let i=$index) {
-        <div class="card">
-            <img src="cien.jpeg" alt="Libro">
-            <div class="card-content">
-                <p><strong>ISBN:</strong> {{item.ISBN}}</p>
-                <p><strong>Título:</strong> {{item.title}}</p>
-                <p><strong>Editorial:</strong> {{item.editorial}}</p>
-                <p><strong>Género:</strong> {{item.genre}}</p>
-                <p><strong>Año:</strong> {{item.year}}</p>
-                <p><strong>Autor:</strong> {{item.Author.fullName}}</p>
-                @if (userType === 'Administrador') {
-                <button class="edit-btn" (click)="updateBook(item)">Editar</button>
-                }
-            </div>
-        </div>
+    <input
+      type="text"
+      id="search-bar"
+      placeholder="Buscar por ISBN..."
+      [(ngModel)]="searchISBN"
+    />
+    }@else {
+    <input
+      type="text"
+      id="search-bar"
+      placeholder="Buscar por Cedula..."
+      [(ngModel)]="searchCedula"
+    />
+    }
+    <button class="btn search-btn" (click)="search()">Buscar</button>
+    @if (searchBack) {
+    <button class="close-btn" (click)="goBack()">Regresar</button>
+    } @if (userType === 'Administrador') { @if (selectedOption==='libro') {
+    <button class="btn add-book-btn" (click)="showBookForm = true">
+      Agregar Libro
+    </button>
+    }@else {
+    <button class="btn add-author-btn" (click)="showAuthorForm = true">
+      Agregar Autor
+    </button>
+    } }
+  </div>
+
+  @if (selectedOption==='libro') {
+  <div class="card-container">
+    @for (item of books; track item.ISBN; let i=$index) {
+    <div class="card">
+      <img src="cien.jpeg" alt="Libro" />
+      <div class="card-content">
+        <p><strong>ISBN:</strong> {{ item.ISBN }}</p>
+        <p><strong>Título:</strong> {{ item.title }}</p>
+        <p><strong>Editorial:</strong> {{ item.editorial }}</p>
+        <p><strong>Género:</strong> {{ item.genre }}</p>
+        <p><strong>Año:</strong> {{ item.year }}</p>
+        <p><strong>Autor:</strong> {{ item.author.fullName }}</p>
+        @if (userType === 'Administrador') {
+        <button class="edit-btn" (click)="updateBook(item)">Editar</button>
         }
+      </div>
     </div>
     }
-    @if (showBookForm) {
-    <div class="overlay" id="overlay">
-        <div class="form-container">
-            @if (editBook) {
-            <h2>Editar Libro</h2>
-            }@else {
-            <h2>Agregar Libro</h2>
-            }
-            <form [formGroup]="bookForm">
-                <label for="ISBN">ISBN:</label>
-                <input type="text" id="ISBN" placeholder="Ingrese ISBN" formControlName="ISBN">
+  </div>
+  } @if (showBookForm) {
+  <div class="overlay" id="overlay">
+    <div class="form-container">
+      @if (editBook) {
+      <h2>Editar Libro</h2>
+      }@else {
+      <h2>Agregar Libro</h2>
+      }
+      <form [formGroup]="bookForm">
+        <label for="ISBN">ISBN:</label>
+        <input
+          type="text"
+          id="ISBN"
+          placeholder="Ingrese ISBN"
+          formControlName="ISBN"
+        />
 
-                <label for="title">Título:</label>
-                <input type="text" id="title" placeholder="Ingrese título" formControlName="title">
+        <label for="title">Título:</label>
+        <input
+          type="text"
+          id="title"
+          placeholder="Ingrese título"
+          formControlName="title"
+        />
 
-                <label for="editorial">Editorial:</label>
-                <input type="text" id="editorial" placeholder="Ingrese editorial" formControlName="editorial">
+        <label for="editorial">Editorial:</label>
+        <input
+          type="text"
+          id="editorial"
+          placeholder="Ingrese editorial"
+          formControlName="editorial"
+        />
 
-                <label for="genre">Género:</label>
-                <input type="text" id="genre" placeholder="Ingrese género" formControlName="genre">
+        <label for="genre">Género:</label>
+        <input
+          type="text"
+          id="genre"
+          placeholder="Ingrese género"
+          formControlName="genre"
+        />
 
-                <label for="year">Año:</label>
-                <input type="number" id="year" placeholder="Ingrese año" formControlName="year">
+        <label for="year">Año:</label>
+        <input
+          type="number"
+          id="year"
+          placeholder="Ingrese año"
+          formControlName="year"
+        />
 
-                <label for="authorCedula">Autor:</label>
-                <input type="text" id="authorCedula" placeholder="Ingrese autor" formControlName="authorCedula">
+        <label for="authorCedula">Autor:</label>
+        <input
+          type="text"
+          id="authorCedula"
+          placeholder="Ingrese autor"
+          formControlName="authorCedula"
+        />
 
-                @if (editBook) {
-                <button type="submit" class="submit-btn delete-btn" (click)="deleteBook()">Eliminar</button>
-                <button type="submit" class="submit-btn" (click)="saveBookData()">Guardar</button>
-                }@else {
-                <button type="submit" class="submit-btn" (click)="createBook()">Crear</button>
-                }
-                <button type="button" class="close-btn" (click)="cancel()">Cancelar</button>
-            </form>
-        </div>
-    </div>
-    }
-
-    @if (showAuthorForm) {
-    <div class="overlay" id="overlay">
-        <div class="form-container">
-            @if (editAuthor) {
-            <h2>Editar Autor</h2>
-            }@else {
-            <h2>Agregar Autor</h2>
-            }
-            <form [formGroup]="authorForm">
-                <label for="cedula">Cédula:</label>
-                <input type="text" id="cedula" placeholder="Ingrese cédula" formControlName="cedula">
-
-                <label for="fullName">Nombre Completo:</label>
-                <input type="text" id="fullName" placeholder="Ingrese nombre completo" formControlName="fullName">
-
-                <label for="nacionalidad">Nacionalidad:</label>
-                <input type="text" id="nacionalidad" placeholder="Ingrese nacionalidad" formControlName="nationality">
-                @if (editAuthor) {
-
-                <button type="submit" class="submit-btn delete-btn" (click)="deleteAuthor()">Eliminar</button>
-                <button type="submit" class="submit-btn" (click)="saveAuthorData()">Guardar</button>
-                }@else {
-                <button type="submit" class="submit-btn" (click)="createAuthor()">Crear</button>
-                }
-                <button type="button" class="close-btn" (click)="cancel()">Cancelar</button>
-            </form>
-        </div>
-    </div>
-    }
-
-    @if (selectedOption==='autor') {
-    <div class="card-container">
-        @for (item of authors; track item.cedula; let i=$index) {
-        <div class="card card-author">
-            <img src="gabrielg.jpg" (click)="showAuthorBook(item)" alt="Autor">
-            <div class="card-content">
-                <p><strong>Cédula: </strong>{{item.cedula}}</p>
-                <p><strong>Nombre: </strong>{{item.fullName}} </p>
-                <p><strong>Nacionalidad: </strong> {{item.nationality}}</p>
-                @if (userType === 'Administrador') {
-                <button class="edit-btn" (click)="updateAuthor(item)">Editar</button>
-                }
-            </div>
-        </div>
+        @if (editBook) {
+        <button
+          type="submit"
+          class="submit-btn delete-btn"
+          (click)="deleteBook()"
+        >
+          Eliminar
+        </button>
+        <button type="submit" class="submit-btn" (click)="saveBookData()">
+          Guardar
+        </button>
+        }@else {
+        <button type="submit" class="submit-btn" (click)="createBook()">
+          Crear
+        </button>
         }
+        <button type="button" class="close-btn" (click)="cancel()">
+          Cancelar
+        </button>
+      </form>
     </div>
-    }
-    @if (authorsBooks.length > 0) {
-    <div class="overlay" id="overlay">
-        <h1 class="author-title">Author: {{authorName}}</h1>
-        <div class="card-container">
-            @for (item of authorsBooks; track item.ISBN; let i=$index) {
-            <div class="card">
-                <img src="cien.jpeg" alt="Libro">
-                <div class="card-content">
-                    <p><strong>ISBN:</strong> {{item.ISBN}}</p>
-                    <p><strong>Título:</strong> {{item.title}}</p>
-                    <p><strong>Editorial:</strong> {{item.editorial}}</p>
-                    <p><strong>Género:</strong> {{item.genre}}</p>
-                    <p><strong>Año:</strong> {{item.year}}</p>
-                </div>
-            </div>
-            }
-        </div>
-        <button class="close-btn" (click)="authorsBooks = []">cerrar</button>
-    </div>
-    }
+  </div>
+  } @if (showAuthorForm) {
+  <div class="overlay" id="overlay">
+    <div class="form-container">
+      @if (editAuthor) {
+      <h2>Editar Autor</h2>
+      }@else {
+      <h2>Agregar Autor</h2>
+      }
+      <form [formGroup]="authorForm">
+        <label for="cedula">Cédula:</label>
+        <input
+          type="text"
+          id="cedula"
+          placeholder="Ingrese cédula"
+          formControlName="cedula"
+        />
 
+        <label for="fullName">Nombre Completo:</label>
+        <input
+          type="text"
+          id="fullName"
+          placeholder="Ingrese nombre completo"
+          formControlName="fullName"
+        />
+
+        <label for="nacionalidad">Nacionalidad:</label>
+        <input
+          type="text"
+          id="nacionalidad"
+          placeholder="Ingrese nacionalidad"
+          formControlName="nationality"
+        />
+        @if (editAuthor) {
+
+        <button
+          type="submit"
+          class="submit-btn delete-btn"
+          (click)="deleteAuthor()"
+        >
+          Eliminar
+        </button>
+        <button type="submit" class="submit-btn" (click)="saveAuthorData()">
+          Guardar
+        </button>
+        }@else {
+        <button type="submit" class="submit-btn" (click)="createAuthor()">
+          Crear
+        </button>
+        }
+        <button type="button" class="close-btn" (click)="cancel()">
+          Cancelar
+        </button>
+      </form>
+    </div>
+  </div>
+  } @if (selectedOption==='autor') {
+  <div class="card-container">
+    @for (item of authors; track item.cedula; let i=$index) {
+    <div class="card card-author">
+      <img src="gabrielg.jpg" (click)="showAuthorBook(item)" alt="Autor" />
+      <div class="card-content">
+        <p><strong>Cédula: </strong>{{ item.cedula }}</p>
+        <p><strong>Nombre: </strong>{{ item.fullName }}</p>
+        <p><strong>Nacionalidad: </strong> {{ item.nationality }}</p>
+        @if (userType === 'Administrador') {
+        <button class="edit-btn" (click)="updateAuthor(item)">Editar</button>
+        }
+      </div>
+    </div>
+    }
+  </div>
+  } @if (authorsBooks.length > 0) {
+  <div class="overlay" id="overlay">
+    <h1 class="author-title">Author: {{ authorName }}</h1>
+    <div class="card-container">
+      @for (item of authorsBooks; track item.ISBN; let i=$index) {
+      <div class="card">
+        <img src="cien.jpeg" alt="Libro" />
+        <div class="card-content">
+          <p><strong>ISBN:</strong> {{ item.ISBN }}</p>
+          <p><strong>Título:</strong> {{ item.title }}</p>
+          <p><strong>Editorial:</strong> {{ item.editorial }}</p>
+          <p><strong>Género:</strong> {{ item.genre }}</p>
+          <p><strong>Año:</strong> {{ item.year }}</p>
+        </div>
+      </div>
+      }
+    </div>
+    <button class="close-btn" (click)="authorsBooks = []">cerrar</button>
+  </div>
+  }
 </body>

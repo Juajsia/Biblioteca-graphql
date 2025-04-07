@@ -67,7 +67,7 @@ export const resolvers = {
     deleteUser: async (_, { id }) => {
       const user = await User.findByPk(id)
       if (!user) throw new Error('User not found')
-      await User.destroy({ where: { id } })
+      await user.destroy()
       return 'User deleted successfully'
     },
     login: async (_, { userName, password }) => {

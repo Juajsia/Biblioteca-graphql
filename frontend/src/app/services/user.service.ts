@@ -1,35 +1,110 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  constructor(private apollo: Apollo) { }
 
-  private myAppUrl: string
-  private myApiUrl: string
-  constructor(private http: HttpClient) {
-    this.myAppUrl = 'http://localhost:3000/'
-    this.myApiUrl = 'api/user'
+  login(user: { userName: string; password: string }): Observable<any> {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation Login($userName: String!, $password: String!) {
+          login(userName: $userName, password: $password) {
+            token
+            message
+          }
+        }
+      `,
+      variables: {
+        userName: user.userName,
+        password: user.password
+      }
+    }).pipe(map((result: any) => result.data.login));
   }
 
-  login(user: any): Observable<any> {
-    return this.http.post<any>(`${this.myAppUrl}${this.myApiUrl}/login`, user)
-  }
   create(user: any): Observable<any> {
-    return this.http.post<any>(`${this.myAppUrl}${this.myApiUrl}/`, user)
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation CreateUser($userName: String!, $password: String!, $type: String!) {
+          createUser(userName: $userName, password: $password, type: $type) {
+            id
+            userName
+            type
+          }
+        }
+      `,
+      variables: {
+        userName: user.userName,
+        password: user.password,
+        type: user.type
+      }
+    }).pipe(map((result: any) => result.data.createUser));
   }
+
   update(user: any, id: string): Observable<any> {
-    return this.http.put<any>(`${this.myAppUrl}${this.myApiUrl}/${id}`, user)
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation UpdateUser($id: ID!, $userName: String!, $password: String!, $type: String!) {
+          updateUser(id: $id, userName: $userName, password: $password, type: $type) {
+            id
+            userName
+            type
+          }
+        }
+      `,
+      variables: {
+        id,
+        userName: user.userName,
+        password: user.password,
+        type: user.type
+      }
+    }).pipe(map((result: any) => result.data.updateUser));
   }
+
   remove(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.myAppUrl}${this.myApiUrl}/${id}`)
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation DeleteUser($id: ID!) {
+          deleteUser(id: $id)
+        }
+      `,
+      variables: { id }
+    }).pipe(map((result: any) => result.data.deleteUser));
   }
+
   findAll(): Observable<any> {
-    return this.http.get<any>(`${this.myAppUrl}${this.myApiUrl}/`)
+    return this.apollo.query({
+      query: gql`
+        query {
+          getUsers {
+            id
+            userName
+            type
+          }
+        }
+      `,
+      fetchPolicy: 'no-cache'
+    }).pipe(map((result: any) => result.data.getUsers));
   }
+
   findByUserName(userName: string): Observable<any> {
-    return this.http.get<any>(`${this.myAppUrl}${this.myApiUrl}/${userName}`)
+    return this.apollo.query({
+      query: gql`
+        query GetUser($userName: String!) {
+          getUser(userName: $userName) {
+            id
+            userName
+            type
+          }
+        }
+      `,
+      variables: { userName },
+      fetchPolicy: 'no-cache'
+    }).pipe(map((result: any) => result.data.getUser));
   }
 }
